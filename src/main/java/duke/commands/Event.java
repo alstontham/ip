@@ -1,3 +1,5 @@
+package duke.commands;
+
 public class Event extends Task{
 
     protected String eventDate;
