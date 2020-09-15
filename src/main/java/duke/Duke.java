@@ -26,7 +26,7 @@ public class Duke {
                 e.getErrorMessage();
             }
         }
-    }
+    } 
 
     private static void executeCommand(Scanner input) throws DukeException {
         //this do-while loop asks users for input, can add items to lists and print the list
