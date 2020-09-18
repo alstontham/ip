@@ -154,7 +154,7 @@ public class Duke {
 
     private static void printCompletedTask(Task task) {
         System.out.println("Ok! I've marked this task as complete!\n" + task + "\n");
-    }
+    } 
 
     private static void printRemovedTask(Task task) {
         System.out.println("Alright! I've removed this task as requested!\n" + task + "\n");
