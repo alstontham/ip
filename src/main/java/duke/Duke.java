@@ -139,7 +139,7 @@ public class Duke {
 
     private static void printCompletedTask(Task task) {
         System.out.println("Ok! I've marked this task as complete!\n" + task + "\n");
-    }
+    } 
 
 }
 
