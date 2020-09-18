@@ -1,6 +1,6 @@
 package duke.exceptions;
 
-public class DukeInvalidIndexException extends DukeException{
+public class DukeInvalidIndexException extends DukeException {
     public DukeInvalidIndexException() {
 
     }

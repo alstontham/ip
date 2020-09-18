@@ -6,6 +6,10 @@ import duke.commands.Task;
 import duke.commands.Todo;
 import duke.exceptions.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +18,7 @@ public class Duke {
     private static List<Task> taskList = new ArrayList<>();
 
     public static void main(String[] args) {
+        readFromFile();
         System.out.println("Hey there! I'm Duke\n" + "What would you like to do?" + "\n");
 
         //Takes user input
@@ -87,9 +92,19 @@ public class Duke {
         //marks a task as done
         else if (userCommand.equals("done")) {
             try {
-                int i = Integer.parseInt(userInput.substring(5, stringLen)) - 1;
-                taskList.get(i).setDone(true);
-                printCompletedTask(taskList.get(i));
+                int taskNum  = Integer.parseInt(userInput.split("\\s", 2)[1]) - 1;
+                taskList.get(taskNum).setDone(true);
+                printCompletedTask(taskList.get(taskNum));
+            } catch (IndexOutOfBoundsException e) {
+                throw new DukeInvalidIndexException();
+            }
+        }
+
+        else if (userCommand.equals("delete")) {
+            try {
+                int taskNum  = Integer.parseInt(userInput.split("\\s", 2)[1]) - 1;
+                printRemovedTask(taskList.get(taskNum));
+                taskList.remove(taskNum);
             } catch (IndexOutOfBoundsException e) {
                 throw new DukeInvalidIndexException();
             }
@@ -104,7 +119,7 @@ public class Duke {
         else {
             throw new DukeInvalidCommandException();
         }
-
+        saveToFile();
     }
     private static String obtainDeadlineDescription(String description) {
         return description.split("/by", 2)[0];
@@ -139,6 +154,64 @@ public class Duke {
 
     private static void printCompletedTask(Task task) {
         System.out.println("Ok! I've marked this task as complete!\n" + task + "\n");
+    }
+
+    private static void printRemovedTask(Task task) {
+        System.out.println("Alright! I've removed this task as requested!\n" + task + "\n");
+    }
+
+    private static void saveToFile() {
+        try {
+            //new File( System.getProperty("user.dir") + "/data").mkdir();
+            FileWriter fw = new FileWriter(System.getProperty("user.dir") + "/data/duke.txt");
+            for (Task task : taskList) {
+                fw.write(task.insertDecimal() + "\n");
+            }
+            fw.close();
+        } catch (IOException e) {
+            System.out.println("An error has occurred while saving data to file. Please try again later.");
+        }
+    }
+
+    private static void readFromFile() {
+        File dataDirectory = new File("data");
+        if (!dataDirectory.exists()) {
+            dataDirectory.mkdir();
+        }
+        try {
+            Scanner sc = new Scanner(new File(System.getProperty("user.dir") + "/data/duke.txt"));
+            while (sc.hasNextLine()) {
+                String newTaskLine = sc.nextLine();
+                Task newTask = convertToTask(newTaskLine);
+                taskList.add(newTask);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("A save file could not be found. " +
+                    "You may either start from scratch or load an existing save file");
+        } catch (DukeTaskConvertException e) {
+            System.out.println("There was an error converting the save file.");
+        }
+    }
+
+    private static Task convertToTask(String taskData) throws DukeTaskConvertException {
+        String[] taskComponents = taskData.split("\\.\\.");
+        String taskType = taskComponents[0];
+        boolean isDone = Boolean.parseBoolean(taskComponents[1]);
+        String taskDescription = taskComponents[2];
+        switch(taskType) {
+            case("T"):
+                return new Todo(taskDescription, isDone);
+            case("D"):
+                String deadlineDescription = taskDescription.split("\\.\\.")[0];
+                String deadlineDate = taskDescription.split("\\.\\.")[1];
+                return new Deadline(deadlineDescription, deadlineDate, isDone);
+            case("E"):
+                String eventDescription = taskDescription.split("\\.\\.")[0];
+                String eventDate = taskDescription.split("\\.\\.")[1];
+                return new Event(eventDescription, eventDate, isDone);
+            default:
+                throw new DukeTaskConvertException();
+        }
     }
 
 }

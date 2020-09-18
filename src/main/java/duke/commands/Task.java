@@ -2,11 +2,19 @@ package duke.commands;
 
 public class Task {
     protected String description;
+    protected String taskType;
     protected boolean isDone;
 
-    public Task(String description) {
+    public Task(String description, String taskType) {
         this.description = description;
+        this.taskType = taskType;
         this.isDone = false;
+    }
+
+    public Task(String description, String taskType, boolean isDone) {
+        this.description = description;
+        this.taskType = taskType;
+        this.isDone = isDone;
     }
 
     public String getStatusIcon() {
@@ -23,5 +31,9 @@ public class Task {
 
     public String toString() {
         return "[" + getStatusIcon() + "] " + getDescription();
+    }
+
+    public String insertDecimal() {
+        return taskType + ".." + isDone + ".." + description;
     }
 }
