@@ -44,11 +44,51 @@ public class Duke {
         }
     }
 
+    private static void readFromFile() {
+        File dataDirectory = new File("data");
+        if (!dataDirectory.exists()) {
+            dataDirectory.mkdir();
+        }
+        try {
+            Scanner sc = new Scanner(new File(System.getProperty("user.dir") + "/data/duke.txt"));
+            while (sc.hasNextLine()) {
+                String newTaskLine = sc.nextLine();
+                Task newTask = convertToTask(newTaskLine);
+                taskList.add(newTask);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("A save file could not be found. " +
+                    "You may either start from scratch or load an existing save file");
+        } catch (DukeTaskConvertException e) {
+            System.out.println("There was an error converting the save file.");
+        }
+    }
+
+    private static Task convertToTask(String taskData) throws DukeTaskConvertException {
+        String[] taskComponents = taskData.split("\\.\\.");
+        String taskType = taskComponents[0];
+        boolean isDone = Boolean.parseBoolean(taskComponents[1]);
+        String taskDescription = taskComponents[2];
+        switch(taskType) {
+            case("T"):
+                return new Todo(taskDescription, isDone);
+            case("D"):
+                String deadlineDescription = taskDescription.split("\\.\\.")[0];
+                String deadlineDate = taskDescription.split("\\.\\.")[1];
+                return new Deadline(deadlineDescription, deadlineDate, isDone);
+            case("E"):
+                String eventDescription = taskDescription.split("\\.\\.")[0];
+                String eventDate = taskDescription.split("\\.\\.")[1];
+                return new Event(eventDescription, eventDate, isDone);
+            default:
+                throw new DukeTaskConvertException();
+        }
+    }
+
     private static void executeCommand(Scanner input) throws DukeException {
         //this do-while loop asks users for input, can add items to lists and print the list
         String userInput = input.nextLine();
         String userCommand = userInput.split("\\s", 2)[0];
-        int stringLen = userInput.length();
 
         //adds a todo item to the list
         if (userCommand.equals(TODO_COMMAND)) {
@@ -132,25 +172,26 @@ public class Duke {
         }
         saveToFile();
     }
-    private static String obtainDeadlineDescription(String description) {
-        return description.split(DEADLINE_SIGNIFIER, 2)[0];
+
+    private static void printNewTask(Task task, int totalTasks) {
+        System.out.println("Ok! I've added the following task:\n" + task + "\n" + "You now have "
+                + totalTasks + " task(s) in the list." + "\n");
     }
 
-    private static String obtainEventDescription(String description) {
-        return description.split(EVENT_SIGNIFIER, 2)[0];
+    private static String obtainDeadlineDescription(String description) {
+        return description.split(DEADLINE_SIGNIFIER, 2)[0];
     }
 
     private static String obtainDeadlineDate(String description) {
         return description.split(DEADLINE_SIGNIFIER, 2)[1];
     }
 
-    private static String obtainEventDate(String description) {
-        return description.split(EVENT_SIGNIFIER, 2)[1];
+    private static String obtainEventDescription(String description) {
+        return description.split(EVENT_SIGNIFIER, 2)[0];
     }
 
-    private static void printNewTask(Task task, int totalTasks) {
-        System.out.println("Ok! I've added the following task:\n" + task + "\n" + "You now have "
-                + totalTasks + " task(s) in the list." + "\n");
+    private static String obtainEventDate(String description) {
+        return description.split(EVENT_SIGNIFIER, 2)[1];
     }
 
     private static void printTaskList(List<Task> tasks) {
@@ -180,47 +221,6 @@ public class Duke {
             fw.close();
         } catch (IOException e) {
             System.out.println("An error has occurred while saving data to file. Please try again later.");
-        }
-    }
-
-    private static void readFromFile() {
-        File dataDirectory = new File("data");
-        if (!dataDirectory.exists()) {
-            dataDirectory.mkdir();
-        }
-        try {
-            Scanner sc = new Scanner(new File(System.getProperty("user.dir") + "/data/duke.txt"));
-            while (sc.hasNextLine()) {
-                String newTaskLine = sc.nextLine();
-                Task newTask = convertToTask(newTaskLine);
-                taskList.add(newTask);
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("A save file could not be found. " +
-                    "You may either start from scratch or load an existing save file");
-        } catch (DukeTaskConvertException e) {
-            System.out.println("There was an error converting the save file.");
-        }
-    }
-
-    private static Task convertToTask(String taskData) throws DukeTaskConvertException {
-        String[] taskComponents = taskData.split("\\.\\.");
-        String taskType = taskComponents[0];
-        boolean isDone = Boolean.parseBoolean(taskComponents[1]);
-        String taskDescription = taskComponents[2];
-        switch(taskType) {
-            case("T"):
-                return new Todo(taskDescription, isDone);
-            case("D"):
-                String deadlineDescription = taskDescription.split("\\.\\.")[0];
-                String deadlineDate = taskDescription.split("\\.\\.")[1];
-                return new Deadline(deadlineDescription, deadlineDate, isDone);
-            case("E"):
-                String eventDescription = taskDescription.split("\\.\\.")[0];
-                String eventDate = taskDescription.split("\\.\\.")[1];
-                return new Event(eventDescription, eventDate, isDone);
-            default:
-                throw new DukeTaskConvertException();
         }
     }
 
