@@ -4,8 +4,8 @@ public class Task {
     protected String description;
     protected String taskType;
     protected boolean isDone;
-    private final String DONE = "\u2713";
-    private final String NOT_DONE = "\u2718";
+    private static final String DONE = "\u2713";
+    private static final String NOT_DONE = "\u2718";
 
     public Task(String description, String taskType) {
         this.description = description;

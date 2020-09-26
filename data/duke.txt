@@ -1,2 +1,2 @@
-T..false..drink water
-T..true..read book
+E..false..eat food .. 12pm
+D..false..finish work .. tonight

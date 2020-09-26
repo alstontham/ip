@@ -15,6 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Duke {
+    private static final String TODO_COMMAND = "todo";
+    private static final String DEADLINE_COMMAND = "deadline";
+    private static final String EVENT_COMMAND = "event";
+    private static final String LIST_COMMAND = "list";
+    private static final String DONE_COMMAND = "done";
+    private static final String DELETE_COMMAND = "delete";
+    private static final String BYE_COMMAND = "bye";
+
+    private static final String DEADLINE_SIGNIFIER = "/by";
+    private static final String EVENT_SIGNIFIER = "/at";
+
     private static List<Task> taskList = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -40,7 +51,7 @@ public class Duke {
         int stringLen = userInput.length();
 
         //adds a todo item to the list
-        if (userCommand.equals("todo")) {
+        if (userCommand.equals(TODO_COMMAND)) {
             try {
                 String taskDetails = userInput.split("\\s", 2)[1];
                 Task newTask = new Todo(taskDetails);
@@ -52,8 +63,8 @@ public class Duke {
         }
 
         //adds a deadline event to the list
-        else if (userCommand.equals("deadline")) {
-            if (!userInput.contains(" /by ")) {
+        else if (userCommand.equals(DEADLINE_COMMAND)) {
+            if (!userInput.contains(DEADLINE_SIGNIFIER)) {
                 throw new DukeDeadlineMissingByException();
             }
             try {
@@ -67,8 +78,8 @@ public class Duke {
         }
 
         //adds an event item to the list
-        else if (userCommand.equals("event")) {
-            if (!userInput.contains(" /at ")) {
+        else if (userCommand.equals(EVENT_COMMAND)) {
+            if (!userInput.contains(EVENT_SIGNIFIER)) {
                 throw new DukeEventMissingAtException();
             }
             try {
@@ -82,7 +93,7 @@ public class Duke {
         }
 
         //lists out respective tasks
-        else if (userInput.equals("list")) {
+        else if (userInput.equals(LIST_COMMAND)) {
             if (taskList.isEmpty()) {
                 throw new DukeTaskListEmptyException();
             }
@@ -90,7 +101,7 @@ public class Duke {
         }
 
         //marks a task as done
-        else if (userCommand.equals("done")) {
+        else if (userCommand.equals(DONE_COMMAND)) {
             try {
                 int taskNum  = Integer.parseInt(userInput.split("\\s", 2)[1]) - 1;
                 taskList.get(taskNum).setDone(true);
@@ -100,7 +111,7 @@ public class Duke {
             }
         }
 
-        else if (userCommand.equals("delete")) {
+        else if (userCommand.equals(DELETE_COMMAND)) {
             try {
                 int taskNum  = Integer.parseInt(userInput.split("\\s", 2)[1]) - 1;
                 printRemovedTask(taskList.get(taskNum));
@@ -110,7 +121,7 @@ public class Duke {
             }
         }
 
-        else if (userCommand.equals("bye")) {
+        else if (userCommand.equals(BYE_COMMAND)) {
             System.out.println("Bye, see you soon!");
             System.exit(0);
         }
@@ -122,19 +133,19 @@ public class Duke {
         saveToFile();
     }
     private static String obtainDeadlineDescription(String description) {
-        return description.split("/by", 2)[0];
+        return description.split(DEADLINE_SIGNIFIER, 2)[0];
     }
 
     private static String obtainEventDescription(String description) {
-        return description.split("/at", 2)[0];
+        return description.split(EVENT_SIGNIFIER, 2)[0];
     }
 
     private static String obtainDeadlineDate(String description) {
-        return description.split("/by", 2)[1];
+        return description.split(DEADLINE_SIGNIFIER, 2)[1];
     }
 
     private static String obtainEventDate(String description) {
-        return description.split("/at", 2)[1];
+        return description.split(EVENT_SIGNIFIER, 2)[1];
     }
 
     private static void printNewTask(Task task, int totalTasks) {
@@ -162,7 +173,6 @@ public class Duke {
 
     private static void saveToFile() {
         try {
-            //new File( System.getProperty("user.dir") + "/data").mkdir();
             FileWriter fw = new FileWriter(System.getProperty("user.dir") + "/data/duke.txt");
             for (Task task : taskList) {
                 fw.write(task.insertDecimal() + "\n");
