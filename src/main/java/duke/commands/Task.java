@@ -4,6 +4,8 @@ public class Task {
     protected String description;
     protected String taskType;
     protected boolean isDone;
+    private final String DONE = "\u2713";
+    private final String NOT_DONE = "\u2718";
 
     public Task(String description, String taskType) {
         this.description = description;
@@ -18,7 +20,7 @@ public class Task {
     }
 
     public String getStatusIcon() {
-        return (isDone ? "\u2713" : "\u2718"); //return tick or X symbols
+        return (isDone ? DONE : NOT_DONE); //return tick or X symbols
     }
 
     public void setDone(boolean isDone) {

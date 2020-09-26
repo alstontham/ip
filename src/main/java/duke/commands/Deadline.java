@@ -1,8 +1,8 @@
 package duke.commands;
 
-public class Deadline extends Task{
+public class Deadline extends Task {
 
-    protected String deadlineDate;
+    private String deadlineDate;
 
     public Deadline(String description, String deadlineDate) {
         super(description, "D");

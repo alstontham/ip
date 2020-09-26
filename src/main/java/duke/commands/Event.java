@@ -2,7 +2,7 @@ package duke.commands;
 
 public class Event extends Task{
 
-    protected String eventDate;
+    private String eventDate;
 
     public Event (String description, String eventDate) {
         super(description, "E");
