@@ -16,11 +16,11 @@ public class Event extends Task{
 
     @Override
     public String toString() {
-        return "[" + taskType + "] " + super.toString() + " (at:" + eventDate + ")";
+        return "[" + taskType + "] " + super.toString() + "(at:" + eventDate + ")";
     }
 
     @Override
     public String insertComma() {
-        return taskType + ".." + isDone + ".." + description + ".." + eventDate;
+        return taskType + "," + isDone + "," + description + "," + eventDate;
     }
 }

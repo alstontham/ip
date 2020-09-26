@@ -18,7 +18,10 @@ public class Duke {
     private static final String SAVE_FILE = "data";
     private static final String PROJECT_DIRECTORY = "user.dir";
     private static final String SAVE_DIRECTORY = "/data/duke.txt";
-    
+
+    private static final String DATA_DELIMITER = ",";
+    private static final String SPACE = "\\s";
+
     private static final String TODO_COMMAND = "todo";
     private static final String DEADLINE_COMMAND = "deadline";
     private static final String EVENT_COMMAND = "event";
@@ -29,6 +32,9 @@ public class Duke {
 
     private static final String DEADLINE_SIGNIFIER = "/by";
     private static final String EVENT_SIGNIFIER = "/at";
+
+    private static final int TASK_DESCRIPTION_INDEX = 0;
+    private static final int TASK_DATE_INDEX = 1;
 
     private static List<Task> taskList = new ArrayList<>();
 
@@ -73,7 +79,7 @@ public class Duke {
     }
 
     private static Task convertToTask(String taskData) throws DukeTaskConvertException {
-        String[] taskComponents = taskData.split(",");
+        String[] taskComponents = taskData.split(DATA_DELIMITER,3);
         String taskType = taskComponents[0];
         boolean isDone = Boolean.parseBoolean(taskComponents[1]);
         String taskDescription = taskComponents[2];
@@ -81,12 +87,12 @@ public class Duke {
             case("T"):
                 return new Todo(taskDescription, isDone);
             case("D"):
-                String deadlineDescription = taskDescription.split(",")[0];
-                String deadlineDate = taskDescription.split(",")[1];
+                String deadlineDescription = taskDescription.split(DATA_DELIMITER)[TASK_DESCRIPTION_INDEX];
+                String deadlineDate = taskDescription.split(DATA_DELIMITER)[TASK_DATE_INDEX];
                 return new Deadline(deadlineDescription, deadlineDate, isDone);
             case("E"):
-                String eventDescription = taskDescription.split(",")[0];
-                String eventDate = taskDescription.split(",")[1];
+                String eventDescription = taskDescription.split(DATA_DELIMITER)[TASK_DESCRIPTION_INDEX];
+                String eventDate = taskDescription.split(DATA_DELIMITER)[TASK_DATE_INDEX];
                 return new Event(eventDescription, eventDate, isDone);
             default:
                 throw new DukeTaskConvertException();
@@ -96,12 +102,12 @@ public class Duke {
     private static void executeCommand(Scanner input) throws DukeException {
         //this do-while loop asks users for input, can add items to lists and print the list
         String userInput = input.nextLine();
-        String userCommand = userInput.split("\\s", 2)[0];
+        String userCommand = userInput.split(SPACE, 2)[0];
 
         //adds a todo item to the list
         if (userCommand.equals(TODO_COMMAND)) {
             try {
-                String taskDetails = userInput.split("\\s", 2)[1];
+                String taskDetails = userInput.split(SPACE, 2)[1];
                 Task newTask = new Todo(taskDetails);
                 taskList.add(newTask);
                 printNewTask(newTask, taskList.size());
@@ -116,7 +122,7 @@ public class Duke {
                 throw new DukeDeadlineMissingByException();
             }
             try {
-                String taskDetails = userInput.split("\\s", 2)[1];
+                String taskDetails = userInput.split(SPACE, 2)[1];
                 Task newTask = new Deadline(obtainDeadlineDescription(taskDetails), obtainDeadlineDate(taskDetails));
                 taskList.add(newTask);
                 printNewTask(newTask, taskList.size());
@@ -131,7 +137,7 @@ public class Duke {
                 throw new DukeEventMissingAtException();
             }
             try {
-                String taskDetails = userInput.split("\\s", 2)[1];
+                String taskDetails = userInput.split(SPACE, 2)[1];
                 Task newTask = new Event(obtainEventDescription(taskDetails), obtainEventDate(taskDetails));
                 taskList.add(newTask);
                 printNewTask(newTask, taskList.size());
@@ -151,7 +157,7 @@ public class Duke {
         //marks a task as done
         else if (userCommand.equals(DONE_COMMAND)) {
             try {
-                int taskNum  = Integer.parseInt(userInput.split("\\s", 2)[1]) - 1;
+                int taskNum  = Integer.parseInt(userInput.split(SPACE, 2)[1]) - 1;
                 taskList.get(taskNum).setDone(true);
                 printCompletedTask(taskList.get(taskNum));
             } catch (IndexOutOfBoundsException e) {
@@ -161,7 +167,7 @@ public class Duke {
 
         else if (userCommand.equals(DELETE_COMMAND)) {
             try {
-                int taskNum  = Integer.parseInt(userInput.split("\\s", 2)[1]) - 1;
+                int taskNum  = Integer.parseInt(userInput.split(SPACE, 2)[1]) - 1;
                 printRemovedTask(taskList.get(taskNum));
                 taskList.remove(taskNum);
             } catch (IndexOutOfBoundsException e) {
@@ -187,19 +193,19 @@ public class Duke {
     }
 
     private static String obtainDeadlineDescription(String description) {
-        return description.split(DEADLINE_SIGNIFIER, 2)[0];
+        return (description.split(DEADLINE_SIGNIFIER, 2)[TASK_DESCRIPTION_INDEX]).trim();
     }
 
     private static String obtainDeadlineDate(String description) {
-        return description.split(DEADLINE_SIGNIFIER, 2)[1];
+        return (description.split(DEADLINE_SIGNIFIER, 2)[TASK_DATE_INDEX]).trim();
     }
 
     private static String obtainEventDescription(String description) {
-        return description.split(EVENT_SIGNIFIER, 2)[0];
+        return (description.split(EVENT_SIGNIFIER, 2)[TASK_DESCRIPTION_INDEX]).trim();
     }
 
     private static String obtainEventDate(String description) {
-        return description.split(EVENT_SIGNIFIER, 2)[1];
+        return (description.split(EVENT_SIGNIFIER, 2)[TASK_DATE_INDEX]).trim();
     }
 
     private static void printTaskList(List<Task> tasks) {
@@ -222,7 +228,7 @@ public class Duke {
 
     private static void saveToFile() {
         try {
-            FileWriter fw = new FileWriter(System.getProperty("user.dir") + "/data/duke.txt");
+            FileWriter fw = new FileWriter(System.getProperty(PROJECT_DIRECTORY) + SAVE_DIRECTORY);
             for (Task task : taskList) {
                 fw.write(task.insertComma() + "\n");
             }
