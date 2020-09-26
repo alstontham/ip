@@ -35,7 +35,7 @@ public class Task {
         return "[" + getStatusIcon() + "] " + getDescription();
     }
 
-    public String insertDecimal() {
-        return taskType + ".." + isDone + ".." + description;
+    public String insertComma() {
+        return taskType + "," + isDone + "," + description;
     }
 }

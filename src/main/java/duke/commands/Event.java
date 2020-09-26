@@ -20,7 +20,7 @@ public class Event extends Task{
     }
 
     @Override
-    public String insertDecimal() {
+    public String insertComma() {
         return taskType + ".." + isDone + ".." + description + ".." + eventDate;
     }
 }

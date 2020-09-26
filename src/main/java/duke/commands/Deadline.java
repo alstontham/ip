@@ -20,7 +20,7 @@ public class Deadline extends Task {
     }
 
     @Override
-    public String insertDecimal() {
-        return taskType + ".." + isDone + ".." + description + ".." + deadlineDate;
+    public String insertComma() {
+        return taskType + "," + isDone + "," + description + "," + deadlineDate;
     }
 }

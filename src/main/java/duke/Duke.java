@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Duke {
+    private static final String SAVE_FILE = "data";
+    private static final String PROJECT_DIRECTORY = "user.dir";
+    private static final String SAVE_DIRECTORY = "/data/duke.txt";
+    
     private static final String TODO_COMMAND = "todo";
     private static final String DEADLINE_COMMAND = "deadline";
     private static final String EVENT_COMMAND = "event";
@@ -30,7 +34,7 @@ public class Duke {
 
     public static void main(String[] args) {
         readFromFile();
-        System.out.println("Hey there! I'm Duke\n" + "What would you like to do?" + "\n");
+        welcomeMessage();
 
         //Takes user input
         Scanner input = new Scanner(System.in);
@@ -45,12 +49,12 @@ public class Duke {
     }
 
     private static void readFromFile() {
-        File dataDirectory = new File("data");
+        File dataDirectory = new File(SAVE_FILE);
         if (!dataDirectory.exists()) {
             dataDirectory.mkdir();
         }
         try {
-            Scanner sc = new Scanner(new File(System.getProperty("user.dir") + "/data/duke.txt"));
+            Scanner sc = new Scanner(new File(System.getProperty(PROJECT_DIRECTORY) + SAVE_DIRECTORY));
             while (sc.hasNextLine()) {
                 String newTaskLine = sc.nextLine();
                 Task newTask = convertToTask(newTaskLine);
@@ -64,8 +68,12 @@ public class Duke {
         }
     }
 
+    private static void welcomeMessage() {
+        System.out.println("Hey there! I'm Duke\n" + "What would you like to do?" + "\n");
+    }
+
     private static Task convertToTask(String taskData) throws DukeTaskConvertException {
-        String[] taskComponents = taskData.split("\\.\\.");
+        String[] taskComponents = taskData.split(",");
         String taskType = taskComponents[0];
         boolean isDone = Boolean.parseBoolean(taskComponents[1]);
         String taskDescription = taskComponents[2];
@@ -73,12 +81,12 @@ public class Duke {
             case("T"):
                 return new Todo(taskDescription, isDone);
             case("D"):
-                String deadlineDescription = taskDescription.split("\\.\\.")[0];
-                String deadlineDate = taskDescription.split("\\.\\.")[1];
+                String deadlineDescription = taskDescription.split(",")[0];
+                String deadlineDate = taskDescription.split(",")[1];
                 return new Deadline(deadlineDescription, deadlineDate, isDone);
             case("E"):
-                String eventDescription = taskDescription.split("\\.\\.")[0];
-                String eventDate = taskDescription.split("\\.\\.")[1];
+                String eventDescription = taskDescription.split(",")[0];
+                String eventDate = taskDescription.split(",")[1];
                 return new Event(eventDescription, eventDate, isDone);
             default:
                 throw new DukeTaskConvertException();
@@ -216,7 +224,7 @@ public class Duke {
         try {
             FileWriter fw = new FileWriter(System.getProperty("user.dir") + "/data/duke.txt");
             for (Task task : taskList) {
-                fw.write(task.insertDecimal() + "\n");
+                fw.write(task.insertComma() + "\n");
             }
             fw.close();
         } catch (IOException e) {

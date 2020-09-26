@@ -1,2 +1,2 @@
-E..false..eat food .. 12pm
-D..false..finish work .. tonight
+T,true,read book
+D,true,finish cooking , tonight
