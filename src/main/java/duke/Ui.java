@@ -2,6 +2,8 @@ package duke;
 
 import duke.commands.Task;
 
+import java.util.ArrayList;
+
 /**
  * The Ui class handles all of what the user sees as the output on the command line.
  */
@@ -17,17 +19,25 @@ public class Ui {
         System.out.println("Hey there! I'm Duke\n" + "What would you like to do?" + "\n");
     }
 
+
+    
+    public void printTaskListStarter() {
+        System.out.println("I've printed your list of tasks below!\n");
+    }
+  
     /**
      * Prints out the TaskList, one task at a time.
      * @param tasks The TaskList.
      */
-    public void printTaskList(TaskList tasks) {
-        System.out.println("I've printed your list of tasks below!\n");
-
+    public void printTaskList(ArrayList<Task> tasks) {
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + ". " + tasks.getTask(i));
+            System.out.println((i + 1) + ". " + tasks.get(i));
         }
         System.out.print("\n");
+    }
+
+    public void printTaskList(TaskList tasks) {
+        printTaskList(tasks.getTaskList());
     }
 
     /**
@@ -62,5 +72,9 @@ public class Ui {
     public void exitProgram() {
         System.out.println("Bye, see you soon!");
         System.exit(0);
+    }
+  
+    public void printFilteredListStarter(String searchWord) {
+        System.out.println("I've printed out the tasks that contain \'" + searchWord + "\' below!\n");
     }
 }

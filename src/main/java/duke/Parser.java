@@ -6,7 +6,10 @@ import duke.commands.Task;
 import duke.commands.Todo;
 import duke.exceptions.*;
 
+import java.util.ArrayList;
 import java.util.Scanner;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * The Parser class makes sense of the various commands that the user may input into the program and
@@ -19,6 +22,7 @@ public class Parser {
     private static final String LIST_COMMAND = "list";
     private static final String DONE_COMMAND = "done";
     private static final String DELETE_COMMAND = "delete";
+    private static final String FIND_COMMAND = "find";
     private static final String BYE_COMMAND = "bye";
 
     private static final String DEADLINE_SIGNIFIER = "/by";
@@ -55,7 +59,9 @@ public class Parser {
      * @throws DukeInvalidIndexException Exception if the user tries to reference a task index that does
      * not contain a task.
      */
-    public void executeCommand(Scanner input) throws DukeCommandMissingDescriptionException, DukeDeadlineMissingByException, DukeEventMissingAtException, DukeTaskListEmptyException, DukeInvalidIndexException {
+    public void executeCommand(Scanner input) throws DukeCommandMissingDescriptionException,
+            DukeDeadlineMissingByException, DukeEventMissingAtException, DukeTaskListEmptyException,
+            DukeInvalidIndexException, DukeInvalidCommandException {
         String userInput = input.nextLine();
         String userCommand = userInput.split(WHITESPACE, 2)[0];
 
@@ -65,16 +71,18 @@ public class Parser {
             addDeadline(userInput);
         } else if (userCommand.equals(EVENT_COMMAND)) {
             addEvent(userInput);
-        } else if (userInput.equals(LIST_COMMAND)) {
+        } else if (userCommand.equals(LIST_COMMAND)) {
             listTasks();
         } else if (userCommand.equals(DONE_COMMAND)) {
             markDone(userInput);
         } else if (userCommand.equals(DELETE_COMMAND)) {
             deleteTask(userInput);
+        } else if (userCommand.equals(FIND_COMMAND)) {
+            findTask(userInput);
         } else if (userCommand.equals(BYE_COMMAND)) {
             ui.exitProgram();
         } else {
-            new DukeInvalidCommandException();
+            throw new DukeInvalidCommandException();
         }
     }
 
@@ -148,6 +156,7 @@ public class Parser {
         if (taskList.isEmpty()) {
             throw new DukeTaskListEmptyException();
         }
+        ui.printTaskListStarter();
         ui.printTaskList(taskList);
     }
 
@@ -159,7 +168,8 @@ public class Parser {
      */
     private void markDone(String userInput) throws DukeInvalidIndexException {
         try {
-            int taskNum = Integer.parseInt(userInput.split(WHITESPACE, 2)[1]) - 1;
+            String taskDetails = userInput.split(WHITESPACE, 2)[1];
+            int taskNum = Integer.parseInt(taskDetails) - 1;
             taskList.getTask(taskNum).setDone(true);
             ui.printCompletedTask(taskList.getTask(taskNum));
         } catch (IndexOutOfBoundsException e) {
@@ -175,7 +185,8 @@ public class Parser {
      */
     private void deleteTask(String userInput) throws DukeInvalidIndexException {
         try {
-            int taskNum = Integer.parseInt(userInput.split(WHITESPACE, 2)[1]) - 1;
+            String taskDetails = userInput.split(WHITESPACE, 2)[1];
+            int taskNum = Integer.parseInt(taskDetails) - 1;
             ui.printDeletedTask(taskList.getTask(taskNum));
             taskList.deleteTask(taskNum);
         } catch (IndexOutOfBoundsException e) {
@@ -183,6 +194,14 @@ public class Parser {
         }
     }
 
+    private void findTask(String userInput) {
+        String taskDetails = userInput.split(WHITESPACE, 2)[1];
+        ArrayList<Task> filteredList = (ArrayList<Task>)taskList.getTaskList().stream().filter((t) ->
+                t.toString().contains(taskDetails)).collect(toList());
+        ui.printFilteredListStarter(taskDetails);
+        ui.printTaskList(filteredList);
+    }
+  
     /**
      * Obtains description details of the deadline based on the raw user input without the command word.
      * @param description The raw user input without the command.
