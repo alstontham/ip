@@ -194,6 +194,10 @@ public class Parser {
         }
     }
 
+    /**
+     * Finds tasks containing a keyword specified by the user.
+     * @param userInput The keyword that the user is looking for.
+     */
     private void findTask(String userInput) {
         String taskDetails = userInput.split(WHITESPACE, 2)[1];
         ArrayList<Task> filteredList = (ArrayList<Task>)taskList.getTaskList().stream().filter((t) ->

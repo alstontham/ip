@@ -19,8 +19,9 @@ public class Ui {
         System.out.println("Hey there! I'm Duke\n" + "What would you like to do?" + "\n");
     }
 
-
-    
+    /**
+     * String that is printed before the program lists out the user's tasks.
+     */
     public void printTaskListStarter() {
         System.out.println("I've printed your list of tasks below!\n");
     }
@@ -36,6 +37,10 @@ public class Ui {
         System.out.print("\n");
     }
 
+    /**
+     * Calls the other constructor which takes in an ArrayList.
+     * @param tasks List of tasks.
+     */
     public void printTaskList(TaskList tasks) {
         printTaskList(tasks.getTaskList());
     }
@@ -73,7 +78,11 @@ public class Ui {
         System.out.println("Bye, see you soon!");
         System.exit(0);
     }
-  
+
+    /**
+     * String that is printed before the list containing tasks with the keyword specified by the user.
+     * @param searchWord Keyword that the user was looking for.
+     */
     public void printFilteredListStarter(String searchWord) {
         System.out.println("I've printed out the tasks that contain \'" + searchWord + "\' below!\n");
     }
