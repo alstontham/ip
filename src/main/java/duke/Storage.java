@@ -12,6 +12,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * The Storage class handles the saving and loading of the user's tasks from an external text file.
+ */
 public class Storage {
     private static final String DATA_DELIMITER = ",";
     private static final int TASK_DESCRIPTION_INDEX = 0;

@@ -8,6 +8,10 @@ import duke.exceptions.*;
 
 import java.util.Scanner;
 
+/**
+ * The Parser class makes sense of the various commands that the user may input into the program and
+ * executes those commands.
+ */
 public class Parser {
     private static final String TODO_COMMAND = "todo";
     private static final String DEADLINE_COMMAND = "deadline";

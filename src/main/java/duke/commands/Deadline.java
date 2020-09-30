@@ -1,5 +1,9 @@
 package duke.commands;
 
+/**
+ * The Deadline class is an extension of the Task class and creates Deadline objects, marked by their
+ * signature "by" keyword.
+ */
 public class Deadline extends Task {
 
     private String deadlineDate;

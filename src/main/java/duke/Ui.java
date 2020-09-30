@@ -2,6 +2,9 @@ package duke;
 
 import duke.commands.Task;
 
+/**
+ * The Ui class handles all of what the user sees as the output on the command line.
+ */
 public class Ui {
     public Ui() {
 

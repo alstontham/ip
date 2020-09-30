@@ -4,6 +4,10 @@ import duke.exceptions.DukeException;
 
 import java.util.Scanner;
 
+/**
+ * The Duke class is the main class which runs, and is able to take in commands like todo and find,
+ * which helps the user record and manipulate tasks.
+ */
 public class Duke {
     private static final String SAVE_FOLDER = "data";
     private static final String SAVE_FILE = "duke.txt";

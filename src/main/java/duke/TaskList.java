@@ -4,6 +4,9 @@ import duke.commands.Task;
 
 import java.util.ArrayList;
 
+/**
+ * The TaskList class handles modifications to the list of tasks that the user creates.
+ */
 public class TaskList {
     private ArrayList<Task> taskList;
 

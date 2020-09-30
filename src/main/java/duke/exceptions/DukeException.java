@@ -1,6 +1,9 @@
 package duke.exceptions;
 
-//Parent Exception class for the duke.Duke program
+/**
+ * This class is the parent Exception class for the Duke program and serves as a template for all the
+ * other Exception classes.
+ */
 public class DukeException extends Exception{
     public DukeException() {
 

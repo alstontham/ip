@@ -1,5 +1,10 @@
 package duke.commands;
 
+/**
+ * The Task class creates Task objects which are stored in the TaskList. This class is the blueprint
+ * for the various types of tasks that the user might want to create. As such, it contains the default
+ * constructor class for the Task objects as well as methods that might be called.
+ */
 public class Task {
     protected String description;
     protected String taskType;

@@ -1,5 +1,8 @@
 package duke.commands;
 
+/**
+ * The Todo class is an extension of the Task class and creates Todo objects.
+ */
 public class Todo extends Task{
     public Todo(String description) {
         super(description, "T");
