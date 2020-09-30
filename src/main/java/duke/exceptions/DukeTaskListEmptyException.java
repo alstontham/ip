@@ -1,5 +1,9 @@
 package duke.exceptions;
 
+/**
+ * This class is an extension of the DukeException class and prints an error message when the user tries
+ * to list out the tasks when there are no items in the TaskList.
+ */
 public class DukeTaskListEmptyException extends DukeException{
     public DukeTaskListEmptyException() {
 

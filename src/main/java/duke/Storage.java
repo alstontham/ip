@@ -12,6 +12,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * The Storage class handles the saving and loading of the user's tasks from an external text file.
+ */
 public class Storage {
     private static final String DATA_DELIMITER = ",";
     private static final int TASK_DESCRIPTION_INDEX = 0;
@@ -22,6 +25,12 @@ public class Storage {
     private TaskList taskList;
     private String saveFilePath;
 
+    /**
+     * Makes sure the save path exists then reads data from the save file.
+     * @param saveDirectory The folder containing the save file.
+     * @param saveFile The name of the save file.
+     * @param taskList The list with the user's tasks.
+     */
     public Storage(String saveDirectory, String saveFile, TaskList taskList) {
         this.taskList = taskList;
         this.saveDirectory = saveDirectory;
@@ -31,6 +40,9 @@ public class Storage {
 
     }
 
+    /**
+     * Checks if the save directory exists, and if not, creates it.
+     */
     public void ensureSaveDirectory() {
         File dataDirectory = new File(saveDirectory);
         if (!dataDirectory.exists()) {
@@ -38,6 +50,9 @@ public class Storage {
         }
     }
 
+    /**
+     * Reads data from the save file, converts them into tasks then adds them to the TaskList.
+     */
     public void readFromFile() {
         try {
             Scanner sc = new Scanner(new File(System.getProperty(PROJECT_DIRECTORY) + saveFilePath));
@@ -54,6 +69,12 @@ public class Storage {
         }
     }
 
+    /**
+     * Converts strings from the save file into tasks.
+     * @param taskData The string from the save file.
+     * @return A Task object that contains details about the Task.
+     * @throws DukeTaskConvertException Exception that is thrown when there is an error converting a task.
+     */
     private Task convertToTask(String taskData) throws DukeTaskConvertException {
         String[] taskComponents = taskData.split(DATA_DELIMITER,3);
         String taskType = taskComponents[0];
@@ -75,6 +96,9 @@ public class Storage {
         }
     }
 
+    /**
+     * Locates the save file and overwrites the existing data with the new task data.
+     */
     public void saveToFile() {
         try {
             FileWriter fw = new FileWriter(System.getProperty(PROJECT_DIRECTORY) + saveFilePath);
