@@ -48,22 +48,23 @@ public class Parser {
     /**
      * Splits the raw user input and executes a command based on the command input.
      * @param input Raw user input.
-     * @throws DukeCommandMissingDescriptionException Exception if the command that requries an extra
+     * @throws DukeCommandMissingDescriptionException Exception if the command that requires an extra
      * description is missing one.
-     * @throws DukeDeadlineMissingByException Exception if the user wants to add a deadline but does not
-     * include the "by" signifier.
-     * @throws DukeEventMissingAtException Exception if the user wants to add an event but does not include
-     * the "at" signifier.
      * @throws DukeTaskListEmptyException Exception if the user tries to print out the list of tasks but
      * does not have any in the TaskList.
      * @throws DukeInvalidIndexException Exception if the user tries to reference a task index that does
      * not contain a task.
+     * @throws DukeInvalidCommandException Exception if the user tries to execute a command that is not recognized.
+     * @throws DukeMissingDateException Exception if the user does not specify a date for the deadline or event tasks.
      */
-    public void executeCommand(Scanner input) throws DukeCommandMissingDescriptionException,
-            DukeDeadlineMissingByException, DukeEventMissingAtException, DukeTaskListEmptyException,
-            DukeInvalidIndexException, DukeInvalidCommandException {
+    public void executeCommand(Scanner input) throws DukeCommandMissingDescriptionException, DukeTaskListEmptyException,
+            DukeInvalidIndexException, DukeInvalidCommandException, DukeMissingDateException {
         String userInput = input.nextLine();
         String userCommand = userInput.split(WHITESPACE, 2)[0];
+
+        if (userInput.isEmpty()) {
+            System.out.println("The description parameter cannot be empty! Please enter the details for your command!\n");
+        }
 
         if (userCommand.equals(TODO_COMMAND)) {
             addTodo(userInput);
@@ -106,14 +107,12 @@ public class Parser {
     /**
      * Adds a deadline task into the TaskList.
      * @param userInput The raw user input.
-     * @throws DukeDeadlineMissingByException Exception if the user wants to add a deadline but does not
-     * include the "by" signifier.
      * @throws DukeCommandMissingDescriptionException Exception if the command that requries an extra
      * description is missing one.
      */
-    private void addDeadline(String userInput) throws DukeDeadlineMissingByException, DukeCommandMissingDescriptionException {
+    private void addDeadline(String userInput) throws DukeCommandMissingDescriptionException, DukeMissingDateException {
         if (!userInput.contains(DEADLINE_SIGNIFIER)) {
-            throw new DukeDeadlineMissingByException();
+            System.out.println("Remember to put 'by' when specifying a deadline!\n");
         }
         try {
             String taskDetails = userInput.split(WHITESPACE, 2)[1];
@@ -128,14 +127,12 @@ public class Parser {
     /**
      * Adds an event task into the TaskList.
      * @param userInput The raw user input.
-     * @throws DukeEventMissingAtException Exception if the user wants to add an event but does not include
-     * the "at" signifier.
      * @throws DukeCommandMissingDescriptionException Exception if the command that requries an extra
      * description is missing one.
      */
-    private void addEvent(String userInput) throws DukeEventMissingAtException, DukeCommandMissingDescriptionException {
+    private void addEvent(String userInput) throws DukeCommandMissingDescriptionException, DukeMissingDateException {
         if (!userInput.contains(EVENT_SIGNIFIER)) {
-            throw new DukeEventMissingAtException();
+            System.out.println("Remember to put 'at' in your event command!\n");
         }
         try {
             String taskDetails = userInput.split(WHITESPACE, 2)[1];
@@ -199,11 +196,15 @@ public class Parser {
      * @param userInput The keyword that the user is looking for.
      */
     private void findTask(String userInput) {
-        String taskDetails = userInput.split(WHITESPACE, 2)[1];
-        ArrayList<Task> filteredList = (ArrayList<Task>)taskList.getTaskList().stream().filter((t) ->
-                t.toString().contains(taskDetails)).collect(toList());
-        ui.printFilteredListStarter(taskDetails);
-        ui.printTaskList(filteredList);
+        try {
+            String taskDetails = userInput.split(WHITESPACE, 2)[1];
+            ArrayList<Task> filteredList = (ArrayList<Task>) taskList.getTaskList().stream().filter((t) ->
+                    t.toString().contains(taskDetails)).collect(toList());
+            ui.printFilteredListStarter(taskDetails);
+            ui.printTaskList(filteredList);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Please enter a valid search term!\n");
+        }
     }
   
     /**
@@ -211,17 +212,28 @@ public class Parser {
      * @param description The raw user input without the command.
      * @return The details of the deadline.
      */
-    private String obtainDeadlineDescription(String description) {
-        return (description.split(DEADLINE_SIGNIFIER, 2)[TASK_DESCRIPTION_INDEX]).trim();
+    private String obtainDeadlineDescription(String description) throws DukeCommandMissingDescriptionException {
+        String deadlineDescription = (description.split(DEADLINE_SIGNIFIER, 2)[TASK_DESCRIPTION_INDEX]).trim();
+        if (deadlineDescription.isEmpty()) {
+            throw new DukeCommandMissingDescriptionException();
+        } else {
+            return deadlineDescription;
+        }
     }
 
     /**
      * Obtains date of the deadline based on the raw user input without the command word.
      * @param description The raw user input without the command.
      * @return The details of when the deadline is.
+     * @throws DukeMissingDateException Exception of the user does not specify a date for their task.
      */
-    private String obtainDeadlineDate(String description) {
-        return (description.split(DEADLINE_SIGNIFIER, 2)[TASK_DATE_INDEX]).trim();
+    private String obtainDeadlineDate(String description) throws DukeMissingDateException {
+        String deadlineDate = (description.split(DEADLINE_SIGNIFIER, 2)[TASK_DATE_INDEX]).trim();
+        if (deadlineDate.isEmpty()) {
+            throw new DukeMissingDateException();
+        } else {
+            return deadlineDate;
+        }
     }
 
     /**
@@ -229,16 +241,27 @@ public class Parser {
      * @param description The raw user input without the command.
      * @return The details of the event.
      */
-    private String obtainEventDescription(String description) {
-        return (description.split(EVENT_SIGNIFIER, 2)[TASK_DESCRIPTION_INDEX]).trim();
+    private String obtainEventDescription(String description) throws DukeCommandMissingDescriptionException {
+        String eventDescription = (description.split(EVENT_SIGNIFIER, 2)[TASK_DESCRIPTION_INDEX]).trim();
+        if (eventDescription.isEmpty()) {
+            throw new DukeCommandMissingDescriptionException();
+        } else {
+            return eventDescription;
+        }
     }
 
     /**
      * Obtains date of the event based on the raw user input without the command word.
      * @param description The raw user input without the command.
      * @return The details of when the event is.
+     * @throws DukeMissingDateException Exception of the user does not specify a date for their task.
      */
-    private String obtainEventDate(String description) {
-        return (description.split(EVENT_SIGNIFIER, 2)[TASK_DATE_INDEX]).trim();
+    private String obtainEventDate(String description) throws DukeMissingDateException {
+        String eventDate = (description.split(EVENT_SIGNIFIER, 2)[TASK_DATE_INDEX]).trim();
+        if (eventDate.isEmpty()) {
+            throw new DukeMissingDateException();
+        } else {
+            return eventDate;
+        }
     }
 }
