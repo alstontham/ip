@@ -1,2 +1,2 @@
-T,false,read book
-E,false,type,now
+T,false,deliver parcel
+E,true,consultation,Tuesday 8am
