@@ -10,7 +10,7 @@ Users are able to add new tasks. Three types of tasks are supported:
 2. *Deadline* - these tasks have a description as well as a date the task should be completed by
 3. *Event* - these tasks have a description and a date that the event will take place
 
-####Todo Tasks
+#### Todo Tasks
 Format for *Todo* tasks: 
 
 `todo (description)`
@@ -25,7 +25,7 @@ Expected outcome:
     [T] [✘] deliver parcel
     You now have 1 task(s) in the list.
  
-####Deadline Tasks
+#### Deadline Tasks
 Format for *Deadline* tasks: 
 
 `deadline (description) /by (date)`
@@ -40,7 +40,7 @@ Expected outcome:
     [D] [✘] finish assignment (by: Monday)
     You now have 2 task(s) in the list.
  
-####Event Tasks
+#### Event Tasks
 Format for *Event* tasks: 
 
 `event (description) /at (date)`
